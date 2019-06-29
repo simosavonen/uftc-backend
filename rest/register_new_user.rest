@@ -1,0 +1,8 @@
+POST http://localhost:3001/api/users/register
+Content-Type: application/json
+
+{
+    "name": "Random Person",
+    "email": "random.person@ambientia.com",
+    "password": "salasana"
+}
