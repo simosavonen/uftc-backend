@@ -1,8 +1,7 @@
 const config = require("./utils/config");
 const express = require("express");
 const app = express();
-const cp = require("cookie-parser");
-const bp = require("body-parser");
+
 const mongoose = require("mongoose");
 const passport = require("passport");
 
@@ -13,8 +12,7 @@ const { errorHandler } = require("./utils/middleware");
 app.use(passport.initialize());
 require("./passport-config")(passport);
 
-app.use(cp()); // in case front end stores the token in a cookie?
-app.use(bp.json());
+app.use(express.json({ extended: false }));
 
 mongoose.set("useCreateIndex", true);
 mongoose
