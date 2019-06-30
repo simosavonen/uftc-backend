@@ -1,9 +1,7 @@
+const config = require("../utils/config");
 const usersRouter = require("express").Router();
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-
-require("dotenv").config();
-const secret = process.env.SECRET || "the default secret";
 
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
@@ -25,11 +23,11 @@ usersRouter.post("/register", async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
-    console.log(req.body);
-
-    const taken = await User.findOne({ email: email });
+    const taken = await User.findOne({ email });
     if (taken) {
-      return res.status(400).json("Email address exists in database.");
+      return res
+        .status(400)
+        .json({ error: "You already have an account, log in instead." });
     }
 
     const saltRounds = 10;
@@ -42,7 +40,6 @@ usersRouter.post("/register", async (req, res, next) => {
     });
 
     const savedUser = await user.save();
-
     res.json(savedUser);
   } catch (exception) {
     next(exception);
@@ -65,7 +62,7 @@ usersRouter.post("/login", async (req, res) => {
     id: user._id
   };
 
-  const token = jwt.sign(userForToken, secret);
+  const token = jwt.sign(userForToken, config.SECRET);
 
   res
     .status(200)

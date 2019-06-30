@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 
 const usersRouter = require("./routes/users");
+// const challengesRouter = require("./routes/challenges")
 
 const { errorHandler } = require("./utils/middleware");
 
@@ -25,8 +26,7 @@ mongoose
   });
 
 app.use("/api/users", usersRouter);
-// app.use("/api/challenges", require("./routes/challenges"));
-// app.use("/api/activities", require("./routes/activities"));
+// app.use("/api/challenges", challengesRouter);
 
 app.use(errorHandler);
 
