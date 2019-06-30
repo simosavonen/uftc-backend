@@ -1,6 +1,6 @@
 GET http://localhost:3001/api/users/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmFuZG9tIFBlcnNvbiIsImlkIjoiNWQxNzk4MDY1MzY3ZGYyZjI4ZGQwNzA4IiwiaWF0IjoxNTYxODI3Mzk4fQ.bXwXgJrj9UtcEaK7gzMJss1q0Utk-A60Qr8hcRlpOMc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmFuZG9tIFBlcnNvbiIsImlkIjoiNWQxNzk4MDY1MzY3ZGYyZjI4ZGQwNzA4IiwiaWF0IjoxNTYxOTExOTQ1fQ.ii9q51jI41rQAFHeMtDaZf8jjO2n-c38LFJ5S5sypW8
 
 {
     "id": "5d1798065367df2f28dd0708"
