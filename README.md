@@ -10,6 +10,9 @@ Capstone projekti
    - kannattaa asentaa myös ehdotettu Compass
    - käyttääksesi esim. MongoDBn atlasta, lisää projektiin .env tiedosto, jossa MONGODB_URI=your_connection_string
 4. `npm run watch` käynnistää palvelimen nodemonin kanssa
+   - POST http://localhost:3001/api/users/register
+   - POST http://localhost:3001/api/users/login
+   - GET http://localhost:3001/api/users/ (passport.js protected, needs the token in the header)
 
 ### Koodissa yhdistelty
 
