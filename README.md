@@ -6,10 +6,10 @@ Capstone projekti
 
 1. kloonaa projekti, mene sen kansioon
 2. `npm install` asentaa noden moduulit
-3. lisää puuttuva .env tiedosto
-   - PORT=3001
-   - MONGODB_URI=your_mongo_atlas_connection_string
-   - SECRET=your_secret_string
+3. asenna MongoDB Community Edition https://docs.mongodb.com/manual/administration/install-community/
+   - kannattaa asentaa myös ehdotettu Compass
+   - käyttääksesi esim. MongoDBn atlasta, lisää projektiin .env tiedosto, jossa MONGODB_URI=your_connection_string
+4. `npm run watch` käynnistää palvelimen nodemonin kanssa
 
 ### Koodissa yhdistelty
 
