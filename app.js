@@ -1,7 +1,7 @@
 const config = require("./utils/config");
 const express = require("express");
 const app = express();
-
+const cors = require("cors");
 const mongoose = require("mongoose");
 const passport = require("passport");
 
@@ -13,6 +13,7 @@ const { errorHandler } = require("./utils/middleware");
 app.use(passport.initialize());
 require("./passport-config")(passport);
 
+app.use(cors());
 app.use(express.json({ extended: false }));
 
 mongoose.set("useCreateIndex", true);

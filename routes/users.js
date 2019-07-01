@@ -7,14 +7,14 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
 // passport protected route(s)
+// http://www.passportjs.org/docs/authenticate/
 usersRouter.get(
   "/",
   passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    const user = await User.findById(req.body.id);
-    if (user) {
-      res.json(user);
-    }
+  (req, res) => {
+    // If this function gets called, authentication was successful.
+    // 'req.user' contains the authenticated user.
+    res.json(req.user);
   }
 );
 
