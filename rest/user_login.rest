@@ -2,6 +2,6 @@ POST http://localhost:3001/api/users/login
 Content-Type: application/json
 
 {
-    "email": "random.person@ambientia.com",
+    "email": "random.person@ambientia.fi",
     "password": "salasana"
 }

@@ -2,7 +2,7 @@ const config = require("./utils/config");
 const passportJWT = require("passport-jwt");
 const Strategy = passportJWT.Strategy;
 const ExtractJwt = passportJWT.ExtractJwt;
-const User = require("./models/user");
+const User = require("./models/User");
 
 const secret = config.SECRET || "some other secret as default";
 

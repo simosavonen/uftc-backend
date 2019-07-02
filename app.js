@@ -6,8 +6,10 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 
 const usersRouter = require("./routes/users");
-// const challengesRouter = require("./routes/challenges")
+const challengesRouter = require("./routes/challenges");
 const workoutRouter = require("./routes/workouts");
+const activityRouter = require("./routes/activities");
+const scoresRouter = require("./routes/scores");
 
 const { errorHandler } = require("./utils/middleware");
 
@@ -17,7 +19,10 @@ require("./passport-config")(passport);
 app.use(cors());
 app.use(express.json({ extended: false }));
 
+// fix deprecation warnings
+mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
+
 mongoose
   .connect(config.MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
@@ -28,8 +33,10 @@ mongoose
   });
 
 app.use("/api/users", usersRouter);
-// app.use("/api/challenges", challengesRouter);
+app.use("/api/challenges", challengesRouter);
 app.use("/api/workouts", workoutRouter);
+app.use("/api/activities", activityRouter);
+app.use("/api/scores", scoresRouter);
 
 app.use(errorHandler);
 

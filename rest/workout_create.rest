@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/workouts/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmFuZG9tIFBlcnNvbiIsImlkIjoiNWQxYjYyZGM3OWYzMGMzMmVjN2IzMzcyIiwiaWF0IjoxNTYyMDc1ODc2fQ._AtiZuURmiaImWROwzPCrxQjzGerzUwc_FBZLkv0M5Q
+
+{
+    "date": "2019-07-03",
+    "amount": 5,    
+    "activity": "5d1b565dd5a1bf1f482b2c35",
+    "challenge": "5d1b5be37fbc5139bcd0c516"
+}

@@ -1,0 +1,12 @@
+POST http://localhost:3001/api/activities/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmFuZG9tIFBlcnNvbiIsImlkIjoiNWQxYjYyZGM3OWYzMGMzMmVjN2IzMzcyIiwiaWF0IjoxNTYyMDc1ODc2fQ._AtiZuURmiaImWROwzPCrxQjzGerzUwc_FBZLkv0M5Q
+
+{
+    "name": "Kahvakuulanosto",
+    "points": 3,
+    "type": "Lihaskuntoharjoitus",
+    "unit": "5 nostoa",
+    "description": "Nosta kahvakuula maan tasolta hartioiden yläpuolelle",
+    "url": "http://fake.you.tube/123"
+}

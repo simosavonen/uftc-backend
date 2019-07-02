@@ -1,5 +1,0 @@
-GET http://localhost:3001/api/users/
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmFuZG9tIFBlcnNvbiIsImlkIjoiNWQxYWY3OTc5M2U5ZTIxOGU0YjBiMGMzIiwiaWF0IjoxNTYyMDU2NzI1fQ.fG_BfqMgNrc7xyX4Z7v_Ia7FrxzhY4Xzq2ZjquHeJnI
-
-{}

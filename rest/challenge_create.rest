@@ -1,0 +1,14 @@
+POST http://localhost:3001/api/challenges/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmFuZG9tIFBlcnNvbiIsImlkIjoiNWQxYjYyZGM3OWYzMGMzMmVjN2IzMzcyIiwiaWF0IjoxNTYyMDc1ODc2fQ._AtiZuURmiaImWROwzPCrxQjzGerzUwc_FBZLkv0M5Q
+
+{
+    "name": "Syksy 19 megahaaste",
+    "pointsGoal": 7500,    
+    "releaseDate": "2019-07-01",
+    "startDate": "2019-08-01",
+    "endDate": "2019-11-30",
+    "deadline": "2019-12-14",
+    "seriesTitle": "Kaikki pelaa!",
+    "pointBonus": 1
+}

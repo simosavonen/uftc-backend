@@ -1,6 +1,6 @@
 const config = require("../utils/config");
 const usersRouter = require("express").Router();
-const User = require("../models/user");
+const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
 const passport = require("passport");
