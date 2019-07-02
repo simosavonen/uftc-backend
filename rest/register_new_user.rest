@@ -2,7 +2,7 @@ POST http://localhost:3001/api/users/register
 Content-Type: application/json
 
 {
-    "name": "Random Person",
-    "email": "random.person@ambientia.com",
+    "name": "Tuija Testaaja",
+    "email": "tuija.testaaja@ambientia.fi",
     "password": "salasana"
 }

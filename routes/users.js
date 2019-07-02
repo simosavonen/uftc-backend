@@ -40,7 +40,7 @@ usersRouter.post("/register", async (req, res, next) => {
     });
 
     const savedUser = await user.save();
-    res.json(savedUser);
+    res.json({ savedUser });
   } catch (exception) {
     next(exception);
   }
