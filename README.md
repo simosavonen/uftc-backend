@@ -16,16 +16,12 @@ Capstone projekti
 - POST http://localhost:3001/api/users/register
 - POST http://localhost:3001/api/users/login
 - GET http://localhost:3001/api/users/
-
 - POST http://localhost:3001/api/activities/
 - GET http://localhost:3001/api/activities/
-
 - POST http://localhost:3001/api/challenges/
 - GET http://localhost:3001/api/challenges/
-
 - POST http://localhost:3001/api/workouts/
 - GET http://localhost:3001/api/workouts/
-
 - GET http://localhost:3001/api/scores/
 
 ## Mikä ei?
