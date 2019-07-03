@@ -11,25 +11,28 @@ const workoutRouter = require("./routes/workouts");
 const activityRouter = require("./routes/activities");
 const scoresRouter = require("./routes/scores");
 
-const { errorHandler } = require("./utils/middleware");
+const { errorHandler, requestLogger } = require("./utils/middleware");
+const logger = require("./utils/logger");
 
 app.use(passport.initialize());
 require("./passport-config")(passport);
 
 app.use(cors());
 app.use(express.json({ extended: false }));
+app.use(requestLogger);
 
 // fix deprecation warnings
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 
+logger.info("connecting to", config.MONGODB_URI);
 mongoose
   .connect(config.MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
-    console.log("connected to MongoDB");
+    logger.error("connected to MongoDB");
   })
   .catch(error => {
-    console.log("error connection to MongoDB:", error.message);
+    logger.error("error connection to MongoDB:", error.message);
   });
 
 app.use("/api/users", usersRouter);
