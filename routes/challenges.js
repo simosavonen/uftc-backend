@@ -4,7 +4,7 @@ const Activity = require("../models/Activity");
 const passport = require("passport");
 
 challengesRouter.get("/", async (req, res) => {
-  const challenges = await Challenge.find({});
+  const challenges = await Challenge.find({}).populate("activities");
   res.json(challenges.map(c => c.toJSON()));
 });
 
