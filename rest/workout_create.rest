@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/workouts/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUGFoYSBWYXN0dXN0YWphIiwiaWQiOiI1ZDFlNzMxODM3ZDgwMzMwNGNmZTAyMGEiLCJpYXQiOjE1NjI0NTM2NDB9.Oy1AirTYjJEDIN8xOrdUpeOYII_LCE-_4pNgDu_Kvl8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUGFoYSBWYXN0dXN0YWphIiwiaWQiOiI1ZDFlNzMxODM3ZDgwMzMwNGNmZTAyMGEiLCJpYXQiOjE1NjI0OTA3NTh9.H5lGENfMYB-jn2ziXDNqDGM33tTJ4SGrJQwMgZYJk8Y
 
 {
-    "date": "2019-08-22",
-    "amount": 15,    
+    "date": "2019-08-25",
+    "amount": 34,    
     "activity": "5d1ece19f5c488558073c824",
     "challenge": "5d1c5237c360412fbcc98dcc"
 }

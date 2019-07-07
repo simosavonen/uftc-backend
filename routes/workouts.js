@@ -36,6 +36,8 @@ workoutRouter.post(
     // dont trust the clients, check what the real points / activity are
     const activity = await Activity.findById(req.body.activity);
 
+    // voiko tämän siirtää tiedoston loppuun, ettei pisteitä lisätä
+    // jos suorituksen tallentaminen epäonnistui?
     const scoreExists = await Score.findOne({
       user: req.user.id,
       challenge: req.body.challenge
