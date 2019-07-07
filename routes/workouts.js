@@ -15,6 +15,15 @@ workoutRouter.get(
   }
 );
 
+workoutRouter.get(
+  "/all",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const workouts = await Workout.find({}).populate("activity");
+    res.json(workouts.map(w => w.toJSON()));
+  }
+);
+
 workoutRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
@@ -27,15 +36,23 @@ workoutRouter.post(
     // dont trust the clients, check what the real points / activity are
     const activity = await Activity.findById(req.body.activity);
 
+    // voiko tämän siirtää tiedoston loppuun, ettei pisteitä lisätä
+    // jos suorituksen tallentaminen epäonnistui?
     const scoreExists = await Score.findOne({
       user: req.user.id,
       challenge: req.body.challenge
     });
-    const score = new Score({
-      totalPoints: req.body.amount * activity.points,
-      challenge: req.body.challenge,
-      user: req.user.id
-    });
+    if (scoreExists) {
+      scoreExists.totalPoints += req.body.amount * activity.points;
+      await Score.findByIdAndUpdate(scoreExists.id, scoreExists);
+    } else {
+      const score = new Score({
+        totalPoints: req.body.amount * activity.points,
+        challenge: req.body.challenge,
+        user: req.user.id
+      });
+      await score.save();
+    }
 
     if (workoutExists) {
       workoutExists.instances = [
@@ -57,14 +74,6 @@ workoutRouter.post(
         }
       );
 
-      // update total scores
-      if (scoreExists) {
-        scoreExists.totalPoints += req.body.amount * activity.points;
-        await Score.findByIdAndUpdate(scoreExists.id, scoreExists);
-      } else {
-        await score.save();
-      }
-
       res.json(updatedWorkout.toJSON());
     } else {
       const workout = new Workout({
@@ -76,9 +85,6 @@ workoutRouter.post(
       });
 
       const createdWorkout = await workout.save();
-
-      // update total scores
-      await score.save();
 
       res.status(201).json(createdWorkout.toJSON());
     }

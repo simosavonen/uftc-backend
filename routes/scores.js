@@ -1,9 +1,10 @@
 const scoresRouter = require("express").Router();
 const Score = require("../models/Score");
-const passport = require("passport");
 
 scoresRouter.get("/", async (req, res) => {
-  const scores = await Score.find({});
+  const scores = await Score.find({})
+    .populate("user", "name")
+    .populate("challenge", ["name", "seriesTitle", "pointsGoal"]);
   res.json(scores.map(s => s.toJSON()));
 });
 
