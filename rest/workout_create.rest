@@ -3,8 +3,8 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUGFoYSBWYXN0dXN0YWphIiwiaWQiOiI1ZDFlNzMxODM3ZDgwMzMwNGNmZTAyMGEiLCJpYXQiOjE1NjI0OTA3NTh9.H5lGENfMYB-jn2ziXDNqDGM33tTJ4SGrJQwMgZYJk8Y
 
 {
-    "date": "2019-08-25",
-    "amount": 34,    
+    "date": "2019-08-27",
+    "amount": 2,    
     "activity": "5d1ece19f5c488558073c824",
     "challenge": "5d1c5237c360412fbcc98dcc"
 }

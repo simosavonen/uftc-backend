@@ -3,19 +3,21 @@ const mongoose = require("mongoose");
 const workoutSchema = mongoose.Schema({
   instances: [
     {
-      date: String,
-      amount: Number
+      date: { type: Date, required: true },
+      amount: { type: Number, required: true }
     }
   ],
   totalAmount: Number,
-  totalPoints: Number,
+  totalPoints: { type: Number, required: true },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
+    required: true
   },
   activity: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Activity"
+    ref: "Activity",
+    required: true
   }
 });
 
