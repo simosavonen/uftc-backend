@@ -55,13 +55,30 @@ workoutRouter.post(
     }
 
     if (workoutExists) {
-      workoutExists.instances = [
-        ...workoutExists.instances,
-        {
-          date: req.body.date,
-          amount: req.body.amount
-        }
-      ];
+      // is there an instance for this day already?
+      const repeated = workoutExists.instances.find(i => {
+        return i.date.toISOString().substr(0, 10) === req.body.date;
+      });
+
+      if (repeated) {
+        const summed = {
+          _id: repeated._id,
+          date: repeated.date,
+          amount: repeated.amount + req.body.amount
+        };
+
+        workoutExists.instances = workoutExists.instances.map(i =>
+          i.date !== summed.date ? i : summed
+        );
+      } else {
+        workoutExists.instances = [
+          ...workoutExists.instances,
+          {
+            date: req.body.date,
+            amount: req.body.amount
+          }
+        ];
+      }
 
       workoutExists.totalAmount += req.body.amount;
       workoutExists.totalPoints += req.body.amount * activity.points;
