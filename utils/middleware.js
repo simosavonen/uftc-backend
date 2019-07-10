@@ -2,8 +2,14 @@ const logger = require("./logger");
 
 const requestLogger = (request, response, next) => {
   logger.info("Method: ", request.method, " Path: ", request.path);
-  logger.info("Authorization: ", request.headers.authorization);
-  logger.info("Body:  ", request.body);
+  // no need to log 'Authhorization: undefined'
+  if (request.headers.authorization) {
+    logger.info("Authorization: ", request.headers.authorization);
+  }
+  // don't log body if it's just an empty object {}
+  if (Object.keys(request.body).length !== 0) {
+    logger.info("Body:  ", request.body);
+  }
   logger.info("---");
   next();
 };
