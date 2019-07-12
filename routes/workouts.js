@@ -36,8 +36,6 @@ workoutRouter.post(
     // dont trust the clients, check what the real points / activity are
     const activity = await Activity.findById(req.body.activity);
 
-    // voiko tämän siirtää tiedoston loppuun, ettei pisteitä lisätä
-    // jos suorituksen tallentaminen epäonnistui?
     const scoreExists = await Score.findOne({
       user: req.user.id,
       challenge: req.body.challenge
@@ -105,6 +103,64 @@ workoutRouter.post(
 
       res.status(201).json(createdWorkout.toJSON());
     }
+  }
+);
+
+// TODO: ota huomioon sarjan bonuskerroin
+// jos käyttäjä poisti viimeisen merkinnän, poista koko workout olio
+workoutRouter.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const activity = await Activity.findById(req.body.activity);
+    const workout = await Workout.findById(req.params.id);
+    const score = await Score.findOne({ user: req.user.id });
+    if (!activity || !workout || !score) {
+      return res.status(400).send({
+        error: "Could not find the activity, the workout or the score."
+      });
+    }
+
+    const oldInstance = workout.instances.find(i => {
+      return i._id.toString() === req.body.instance.id;
+    });
+    if (!oldInstance) {
+      return res
+        .status(400)
+        .send({ error: "Could not find the workout instance" });
+    }
+    const oldAmount = oldInstance.amount;
+
+    // if user set amount to 0, filter out this instance
+    if (req.body.instance.amount === 0) {
+      workout.instances = workout.instances.filter(
+        i => i._id.toString() !== req.body.instance.id
+      );
+
+      workout.totalAmount -= oldAmount;
+      workout.totalPoints -= oldAmount * activity.points; // series bonus?
+      score.totalPoints -= oldAmount * activity.points; // series bonus?
+    } else {
+      // user changed the amount
+      const delta = req.body.instance.amount - oldAmount;
+      workout.totalAmount += delta;
+      workout.totalPoints += delta * activity.points; // series bonus?
+      score.totalPoints += delta * activity.points; // series bonus?
+
+      workout.instances = workout.instances.map(i =>
+        i._id.toString() !== req.body.instance.id ? i : req.body.instance
+      );
+    }
+
+    const updatedWorkout = await Workout.findByIdAndUpdate(
+      workout.id,
+      workout,
+      { new: true }
+    );
+
+    await Score.findByIdAndUpdate(score.id, score);
+
+    res.json(updatedWorkout.toJSON());
   }
 );
 
