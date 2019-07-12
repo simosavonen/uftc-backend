@@ -36,8 +36,6 @@ workoutRouter.post(
     // dont trust the clients, check what the real points / activity are
     const activity = await Activity.findById(req.body.activity);
 
-    // voiko tämän siirtää tiedoston loppuun, ettei pisteitä lisätä
-    // jos suorituksen tallentaminen epäonnistui?
     const scoreExists = await Score.findOne({
       user: req.user.id,
       challenge: req.body.challenge
@@ -104,6 +102,94 @@ workoutRouter.post(
       const createdWorkout = await workout.save();
 
       res.status(201).json(createdWorkout.toJSON());
+    }
+  }
+);
+
+// TODO: ota huomioon sarjan bonuskerroin
+workoutRouter.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const activity = await Activity.findById(req.body.activity);
+    const workout = await Workout.findById(req.params.id);
+    const score = await Score.findOne({ user: req.user.id });
+    if (!activity || !workout || !score) {
+      return res.status(400).send({
+        error: "Could not find the activity, the workout or the score."
+      });
+    }
+
+    const oldInstance = workout.instances.find(i => {
+      return i._id.toString() === req.body.instance.id;
+    });
+    if (!oldInstance) {
+      return res
+        .status(400)
+        .send({ error: "Could not find the workout instance" });
+    }
+    const oldAmount = oldInstance.amount;
+
+    // if user set amount to 0, filter out this instance
+    if (req.body.instance.amount === 0) {
+      workout.instances = workout.instances.filter(
+        i => i._id.toString() !== req.body.instance.id
+      );
+
+      workout.totalAmount -= oldAmount;
+      workout.totalPoints -= oldAmount * activity.points; // series bonus?
+      score.totalPoints -= oldAmount * activity.points; // series bonus?
+    } else {
+      // user changed the amount
+      const delta = req.body.instance.amount - oldAmount;
+      workout.totalAmount += delta;
+      workout.totalPoints += delta * activity.points; // series bonus?
+      score.totalPoints += delta * activity.points; // series bonus?
+
+      workout.instances = workout.instances.map(i =>
+        i._id.toString() !== req.body.instance.id
+          ? i
+          : {
+              date: req.body.instance.date,
+              amount: req.body.instance.amount,
+              _id: i._id
+            }
+      );
+    }
+
+    await Score.findByIdAndUpdate(score.id, score);
+
+    // delete the workout if instances array got emptied
+    if (workout.instances.length === 0) {
+      await Workout.findByIdAndRemove(workout.id);
+      res.status(204).end();
+    } else {
+      const updatedWorkout = await Workout.findByIdAndUpdate(
+        workout.id,
+        workout,
+        { new: true }
+      );
+      res.json(updatedWorkout.toJSON());
+    }
+  }
+);
+
+workoutRouter.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const workout = await Workout.findById(req.params.id);
+    const score = await Score.findOne({ user: req.user.id });
+    if (workout && workout.user.toString() === req.user.id.toString()) {
+      score.totalPoints -= workout.totalPoints;
+      await Workout.findByIdAndRemove(req.params.id);
+      await Score.findByIdAndUpdate(score.id, score);
+
+      res.status(204).end();
+    } else {
+      res.status(404).send({
+        error: "Could not delete the workout."
+      });
     }
   }
 );
