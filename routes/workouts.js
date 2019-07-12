@@ -107,7 +107,6 @@ workoutRouter.post(
 );
 
 // TODO: ota huomioon sarjan bonuskerroin
-// jos käyttäjä poisti viimeisen merkinnän, poista koko workout olio
 workoutRouter.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
@@ -152,15 +151,20 @@ workoutRouter.put(
       );
     }
 
-    const updatedWorkout = await Workout.findByIdAndUpdate(
-      workout.id,
-      workout,
-      { new: true }
-    );
-
     await Score.findByIdAndUpdate(score.id, score);
 
-    res.json(updatedWorkout.toJSON());
+    // delete the workout if instances array got emptied
+    if (workout.instances.length === 0) {
+      await Workout.findByIdAndRemove(workout.id);
+      res.status(204).end();
+    } else {
+      const updatedWorkout = await Workout.findByIdAndUpdate(
+        workout.id,
+        workout,
+        { new: true }
+      );
+      res.json(updatedWorkout.toJSON());
+    }
   }
 );
 
@@ -172,7 +176,7 @@ workoutRouter.delete(
     const score = await Score.findOne({ user: req.user.id });
     if (workout && workout.user.toString() === req.user.id.toString()) {
       score.totalPoints -= workout.totalPoints;
-      await Workout.findByIdAndRemove(request.params.id);
+      await Workout.findByIdAndRemove(req.params.id);
       await Score.findByIdAndUpdate(score.id, score);
 
       res.status(204).end();
