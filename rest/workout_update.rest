@@ -1,0 +1,12 @@
+PUT http://localhost:3001/api/workouts/5d277ee1de5e02728424b808
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUGFoYSBWYXN0dXN0YWphIiwiaWQiOiI1ZDFlNzMxODM3ZDgwMzMwNGNmZTAyMGEiLCJpYXQiOjE1NjI5MjQxMjB9.GdQxs2MDHiv8J4NbE0D7KPCrV_LmqrVkGQmzoGHWtqg
+
+{
+  "activity": "5d1d9f871e3e442688b174ff",
+  "instance": {
+    "id": "5d277ee1de5e02728424b809",
+    "date": "2019-07-07T00:00:00.000Z",
+    "amount": 2
+  }
+}
