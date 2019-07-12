@@ -164,4 +164,24 @@ workoutRouter.put(
   }
 );
 
+workoutRouter.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const workout = await Workout.findById(req.params.id);
+    const score = await Score.findOne({ user: req.user.id });
+    if (workout && workout.user.toString() === req.user.id.toString()) {
+      score.totalPoints -= workout.totalPoints;
+      await Workout.findByIdAndRemove(request.params.id);
+      await Score.findByIdAndUpdate(score.id, score);
+
+      res.status(204).end();
+    } else {
+      res.status(404).send({
+        error: "Could not delete the workout."
+      });
+    }
+  }
+);
+
 module.exports = workoutRouter;
