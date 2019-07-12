@@ -24,12 +24,14 @@ Capstone projekti
 - GET http://localhost:3001/api/workouts/
 - GET http://localhost:3001/api/scores/
 
+## Uusia toimintoja 12.7.
+
+- PUT http://localhost:3001/api/workouts/:id
+- DELETE http://localhost:3001/api/workouts/:id
+
 ## Mikä ei?
 
 - Saavutukset tai mitalit
-- Asioiden muokkaaminen tai poistaminen, nyt voi vasta lisätä
-- Validointia ei vielä missään, jos annat vajavaiset tai väärin muotoillut lähtötiedot, homma ei toimi
-- Virheitä ei ehkä näe mistään, yhtään console.log() ei ole lisätty.
 
 Kansiossa REST on oikein muotoiltuja API kutsuja, ja erillinen README.md joka neuvoo missä järjestyksessä ne kannattaa testata.
 
