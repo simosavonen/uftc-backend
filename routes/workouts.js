@@ -147,7 +147,13 @@ workoutRouter.put(
       score.totalPoints += delta * activity.points; // series bonus?
 
       workout.instances = workout.instances.map(i =>
-        i._id.toString() !== req.body.instance.id ? i : req.body.instance
+        i._id.toString() !== req.body.instance.id
+          ? i
+          : {
+              date: req.body.instance.date,
+              amount: req.body.instance.amount,
+              _id: i._id
+            }
       );
     }
 
