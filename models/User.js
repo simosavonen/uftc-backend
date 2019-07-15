@@ -12,6 +12,12 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true
+  },
+  location: String,
+  username: String,
+  activeChallenge: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Challenge"
   }
 });
 

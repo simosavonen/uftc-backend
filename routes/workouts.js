@@ -78,9 +78,6 @@ workoutRouter.post(
         ];
       }
 
-      workoutExists.totalAmount += req.body.amount;
-      workoutExists.totalPoints += req.body.amount * activity.points;
-
       const updatedWorkout = await Workout.findByIdAndUpdate(
         workoutExists.id,
         workoutExists,
@@ -94,9 +91,7 @@ workoutRouter.post(
       const workout = new Workout({
         instances: [{ date: req.body.date, amount: req.body.amount }],
         user: req.user.id,
-        activity: req.body.activity,
-        totalAmount: req.body.amount,
-        totalPoints: req.body.amount * activity.points
+        activity: req.body.activity
       });
 
       const createdWorkout = await workout.save();
