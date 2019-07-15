@@ -131,14 +131,10 @@ workoutRouter.put(
         i => i._id.toString() !== req.body.instance.id
       );
 
-      workout.totalAmount -= oldAmount;
-      workout.totalPoints -= oldAmount * activity.points; // series bonus?
       score.totalPoints -= oldAmount * activity.points; // series bonus?
     } else {
       // user changed the amount
       const delta = req.body.instance.amount - oldAmount;
-      workout.totalAmount += delta;
-      workout.totalPoints += delta * activity.points; // series bonus?
       score.totalPoints += delta * activity.points; // series bonus?
 
       workout.instances = workout.instances.map(i =>
