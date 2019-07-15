@@ -1,0 +1,3 @@
+GET http://localhost:3001/api/scores/today
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmFuZG9tIFBlcnNvbiIsImlkIjoiNWQxNzk4MDY1MzY3ZGYyZjI4ZGQwNzA4IiwiaWF0IjoxNTYzMTk2NzM1fQ.-HEy9Mz-mGG342KY8ItLYkzCgtXMx6bvv74Cl9mfX5I

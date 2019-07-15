@@ -24,14 +24,19 @@ Capstone projekti
 - GET http://localhost:3001/api/workouts/
 - GET http://localhost:3001/api/scores/
 
-## Uusia toimintoja 12.7.
+### Uusia toimintoja 12.7.
 
 - PUT http://localhost:3001/api/workouts/:id
 - DELETE http://localhost:3001/api/workouts/:id
 
+### Uusia toimintoja 15.7.
+
+- GET http://localhost:3001/api/scores/weekly
+- GET http://localhost:3001/api/scores/today
+
 ## Mikä ei?
 
-- Saavutukset tai mitalit
+- Saavutukset
 
 Kansiossa REST on oikein muotoiltuja API kutsuja, ja erillinen README.md joka neuvoo missä järjestyksessä ne kannattaa testata.
 

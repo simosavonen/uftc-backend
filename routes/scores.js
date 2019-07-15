@@ -2,6 +2,7 @@ const scoresRouter = require("express").Router();
 const Score = require("../models/Score");
 const Workout = require("../models/Workout");
 const Challenge = require("../models/Challenge");
+const passport = require("passport");
 
 const differenceInWeeks = (dt2, dt1) => {
   let diff = (dt2.getTime() - dt1.getTime()) / 1000;
@@ -72,5 +73,27 @@ scoresRouter.get("/weekly", async (req, res) => {
 
   res.json(weeklyScores);
 });
+
+scoresRouter.get(
+  "/today",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const workouts = await Workout.find({ user: req.user.id }).populate(
+      "activity",
+      "points"
+    );
+    const today = new Date().toISOString().substr(0, 10);
+    let total = 0;
+    workouts.forEach(w => {
+      const points = w.activity.points;
+      w.instances.forEach(i => {
+        if (i.date.toISOString().substr(0, 10) === today) {
+          total += i.amount * points; // todo: series bonus
+        }
+      });
+    });
+    res.json({ totalToday: total });
+  }
+);
 
 module.exports = scoresRouter;
