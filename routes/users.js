@@ -36,7 +36,9 @@ usersRouter.post("/register", async (req, res, next) => {
     const user = new User({
       name,
       email,
-      password: passwordHash
+      password: passwordHash,
+      location: null,
+      activeChallenge: null
     });
 
     const savedUser = await user.save();

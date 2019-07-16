@@ -14,7 +14,6 @@ const userSchema = new Schema({
     required: true
   },
   location: String,
-  username: String,
   activeChallenge: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Challenge"
