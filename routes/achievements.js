@@ -13,6 +13,12 @@ achievementsRouter.get("/daily", async (req, res) => {
   res.json(achievements.map(a => a.toJSON()));
 });
 
+achievementsRouter.get("/daily/:date", async (req, res) => {
+  const date = new Date(req.params.date).toISOString().substr(0, 10);
+  const achievements = await Achievement.find({ date });
+  res.json(achievements.map(a => a.toJSON()));
+});
+
 achievementsRouter.get("/activity/:id", async (req, res) => {
   const achievements = await Achievement.find({ activity: req.params.id });
   res.json(achievements.map(a => a.toJSON()));
