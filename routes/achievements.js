@@ -13,19 +13,30 @@ achievementsRouter.get("/daily", async (req, res) => {
   res.json(achievements.map(a => a.toJSON()));
 });
 
-achievementsRouter.get("/daily/:date", async (req, res) => {
-  const date = new Date(req.params.date).toISOString().substr(0, 10);
-  const achievements = await Achievement.find({ date });
-  res.json(achievements.map(a => a.toJSON()));
+achievementsRouter.get("/daily/:date", async (req, res, next) => {
+  try {
+    const date = new Date(req.params.date).toISOString().substr(0, 10);
+    const achievements = await Achievement.find({ date });
+    res.json(achievements.map(a => a.toJSON()));
+  } catch (error) {
+    next(error);
+  }
 });
 
-achievementsRouter.get("/activity/:id", async (req, res) => {
-  const achievements = await Achievement.find({ activity: req.params.id });
-  res.json(achievements.map(a => a.toJSON()));
+achievementsRouter.get("/activity/:id", async (req, res, next) => {
+  try {
+    const achievements = await Achievement.find({
+      activity: req.params.id
+    });
+    res.json(achievements.map(a => a.toJSON()));
+  } catch (error) {
+    next(error);
+  }
 });
 
 // passport protected route(s)
 // http://www.passportjs.org/docs/authenticate/
+
 achievementsRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
