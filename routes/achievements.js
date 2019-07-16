@@ -7,6 +7,12 @@ achievementsRouter.get("/", async (req, res) => {
   res.json(achievements.map(a => a.toJSON()));
 });
 
+achievementsRouter.get("/daily", async (req, res) => {
+  const today = new Date().toISOString().substr(0, 10);
+  const achievements = await Achievement.find({ date: today });
+  res.json(achievements.map(a => a.toJSON()));
+});
+
 // passport protected route(s)
 // http://www.passportjs.org/docs/authenticate/
 achievementsRouter.post(
