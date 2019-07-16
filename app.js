@@ -10,6 +10,7 @@ const challengesRouter = require("./routes/challenges");
 const workoutRouter = require("./routes/workouts");
 const activityRouter = require("./routes/activities");
 const scoresRouter = require("./routes/scores");
+const achievementsRouter = require("./routes/achievements");
 
 const { errorHandler, requestLogger } = require("./utils/middleware");
 const logger = require("./utils/logger");
@@ -40,6 +41,7 @@ app.use("/api/challenges", challengesRouter);
 app.use("/api/workouts", workoutRouter);
 app.use("/api/activities", activityRouter);
 app.use("/api/scores", scoresRouter);
+app.use("/api/achievements", achievementsRouter);
 
 app.use(errorHandler);
 

@@ -1,0 +1,13 @@
+POST http://localhost:3001/api/achievements/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmFuZG9tIFBlcnNvbiIsImlkIjoiNWQxNzk4MDY1MzY3ZGYyZjI4ZGQwNzA4IiwiaWF0IjoxNTYyMTM3MDg5fQ.8QRQh-lclAWA19fMQ8N0riVeu4teXXqqkUH863uwbGE
+
+{
+      "name": "Plank Newbie",
+      "requirement": 120,
+      "pointsReward": 10,
+      "date": null,
+      "fontAwesomeIcon": "trophy",
+      "iconColor": "#8C5B53",
+      "activity": "5d1ece19f5c488558073c824"
+}
