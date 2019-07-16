@@ -13,6 +13,11 @@ achievementsRouter.get("/daily", async (req, res) => {
   res.json(achievements.map(a => a.toJSON()));
 });
 
+achievementsRouter.get("/activity/:id", async (req, res) => {
+  const achievements = await Achievement.find({ activity: req.params.id });
+  res.json(achievements.map(a => a.toJSON()));
+});
+
 // passport protected route(s)
 // http://www.passportjs.org/docs/authenticate/
 achievementsRouter.post(
