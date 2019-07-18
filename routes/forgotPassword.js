@@ -1,5 +1,6 @@
 const config = require("../utils/config");
 const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const forgotPasswordRouter = require("express").Router();
 const User = require("../models/User");
@@ -14,8 +15,9 @@ forgotPasswordRouter.post("/", async (req, res, next) => {
     if (emailExists) {
       const resetToken = crypto.randomBytes(20).toString("hex");
       const resetRequest = new ResetRequest({
+        email,
         token: resetToken,
-        expires: Date.now() + 36000
+        expires: Date.now() + 3600000
       });
       await resetRequest.save();
 
@@ -49,6 +51,45 @@ forgotPasswordRouter.post("/", async (req, res, next) => {
     } else {
       console.error("tried to reset password of an unknown email");
       res.status(403).send("unknown email");
+    }
+  } catch (exception) {
+    next(exception);
+  }
+});
+
+forgotPasswordRouter.post("/verify", async (req, res, next) => {
+  try {
+    const { token } = req.body;
+
+    const isVerified = await ResetRequest.findOne({ token });
+
+    if (isVerified && isVerified.expires.getTime() > Date.now()) {
+      res.status(200).json(isVerified);
+    } else {
+      console.error("token was expired or not found");
+      res.status(403).send("token expired or not found");
+    }
+  } catch (exception) {
+    next(exception);
+  }
+});
+
+forgotPasswordRouter.post("/reset", async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+
+    const isVerified = await ResetRequest.findOne({ token });
+
+    if (isVerified && isVerified.expires.getTime() > Date.now()) {
+      const saltRounds = 10;
+      const passwordHash = await bcrypt.hash(password, saltRounds);
+
+      const user = await User.findOne({ email: isVerified.email });
+      await User.findByIdAndUpdate(user.id, { password: passwordHash });
+      res.status(200).send("Password update OK");
+    } else {
+      console.error("token was expired or not found");
+      res.status(403).send("token expired or not found");
     }
   } catch (exception) {
     next(exception);
