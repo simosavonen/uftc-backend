@@ -21,7 +21,7 @@ usersRouter.get(
 // unprotected routes
 usersRouter.post("/register", async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, location } = req.body;
 
     const taken = await User.findOne({ email });
     if (taken) {
@@ -37,7 +37,7 @@ usersRouter.post("/register", async (req, res, next) => {
       name,
       email,
       password: passwordHash,
-      location: null,
+      location,
       activeChallenge: null
     });
 
