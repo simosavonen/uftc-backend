@@ -20,7 +20,8 @@ activityRouter.post(
       type: req.body.type,
       unit: req.body.unit,
       description: req.body.description,
-      url: req.body.url
+      url: req.body.url,
+      icon: req.body.icon
     });
 
     const createdActivity = await activity.save();
