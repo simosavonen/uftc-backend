@@ -97,7 +97,6 @@ workoutRouter.post(
           new: true
         }
       );
-
       res.json(updatedWorkout.toJSON());
     } else {
       const workout = new Workout({
@@ -113,17 +112,16 @@ workoutRouter.post(
   }
 );
 
-// TODO: ota huomioon sarjan bonuskerroin
+// TODO: allow user to update only their own workout
 workoutRouter.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const activity = await Activity.findById(req.body.activity);
     const workout = await Workout.findById(req.params.id);
-    const score = await Score.findOne({ user: req.user.id });
-    if (!activity || !workout || !score) {
+    if (!activity || !workout) {
       return res.status(400).send({
-        error: "Could not find the activity, the workout or the score."
+        error: "Could not find the activity or the workout."
       });
     }
 
@@ -135,20 +133,19 @@ workoutRouter.put(
         .status(400)
         .send({ error: "Could not find the workout instance" });
     }
-    const oldAmount = oldInstance.amount;
 
     // if user set amount to 0, filter out this instance
     if (req.body.instance.amount === 0) {
       workout.instances = workout.instances.filter(
         i => i._id.toString() !== req.body.instance.id
       );
-
-      score.totalPoints -= oldAmount * activity.points; // series bonus?
+      // delete the workout if instances array got emptied
+      if (workout.instances.length === 0) {
+        await Workout.findByIdAndRemove(workout.id);
+        res.status(204).end();
+      }
     } else {
       // user changed the amount
-      const delta = req.body.instance.amount - oldAmount;
-      score.totalPoints += delta * activity.points; // series bonus?
-
       workout.instances = workout.instances.map(i =>
         i._id.toString() !== req.body.instance.id
           ? i
@@ -160,20 +157,12 @@ workoutRouter.put(
       );
     }
 
-    await Score.findByIdAndUpdate(score.id, score);
-
-    // delete the workout if instances array got emptied
-    if (workout.instances.length === 0) {
-      await Workout.findByIdAndRemove(workout.id);
-      res.status(204).end();
-    } else {
-      const updatedWorkout = await Workout.findByIdAndUpdate(
-        workout.id,
-        workout,
-        { new: true }
-      );
-      res.json(updatedWorkout.toJSON());
-    }
+    const updatedWorkout = await Workout.findByIdAndUpdate(
+      workout.id,
+      workout,
+      { new: true }
+    );
+    res.json(updatedWorkout.toJSON());
   }
 );
 
