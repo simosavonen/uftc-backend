@@ -27,7 +27,10 @@ scoresRouter.get("/", async (req, res) => {
 });
 
 // Returns the weekly scores, formatted like
-// [{ name: "Random P.", data: [w1, w2, w3, ...]}]
+// [{ name: "Random P.",
+//    id: user._id,
+//    seriesTitle: user.activeChallenge.seriesTitle
+//    data: [w1, w2, w3, ...]}]
 scoresRouter.get("/weekly", async (req, res) => {
   // is this calculation slow with 100+ participants?
   const hrStart = process.hrtime();
@@ -41,7 +44,7 @@ scoresRouter.get("/weekly", async (req, res) => {
   const workouts = await Workout.find({})
     .sort({ user: "asc" })
     .populate("activity", "points")
-    .populate("user", "name");
+    .populate("user", ["name", "location", "activeChallenge"]);
 
   const weeklyScores = [];
 
@@ -49,8 +52,18 @@ scoresRouter.get("/weekly", async (req, res) => {
   let userIndex = -1;
   workouts.forEach(w => {
     if (w.user.id !== lastUser) {
+      let title = "null";
+      if (w.user.activeChallenge) {
+        title = challenges.find(c => {
+          return c._id.toString() === w.user.activeChallenge.toString();
+        }).seriesTitle;
+      }
+
       weeklyScores.push({
         name: abbreviate(w.user.name),
+        id: w.user._id,
+        location: w.user.location,
+        seriesTitle: title,
         data: new Array(weeks).fill(0)
       });
       lastUser = w.user.id;
