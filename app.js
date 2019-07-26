@@ -43,7 +43,7 @@ app.use("/api/workouts", workoutRouter);
 app.use("/api/activities", activityRouter);
 app.use("/api/scores", scoresRouter);
 app.use("/api/achievements", achievementsRouter);
-app.use("/api/forgotpassword", passwordsRouter);
+app.use("/api/passwords", passwordsRouter);
 
 app.use(errorHandler);
 

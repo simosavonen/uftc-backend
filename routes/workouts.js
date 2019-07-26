@@ -15,11 +15,23 @@ workoutRouter.get(
   }
 );
 
+// try not to use this, since it returns the whole dataset
 workoutRouter.get(
   "/all",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const workouts = await Workout.find({}).populate("activity");
+    res.json(workouts.map(w => w.toJSON()));
+  }
+);
+
+workoutRouter.get(
+  "/:userid",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const workouts = await Workout.find({ user: req.params.userid }).populate(
+      "activity"
+    );
     res.json(workouts.map(w => w.toJSON()));
   }
 );

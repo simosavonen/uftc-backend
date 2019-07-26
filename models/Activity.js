@@ -6,7 +6,8 @@ const activitySchema = mongoose.Schema({
   type: String,
   unit: String,
   description: String,
-  url: String
+  url: String,
+  icon: String
 });
 
 activitySchema.set("toJSON", {
