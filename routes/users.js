@@ -11,10 +11,12 @@ const jwt = require("jsonwebtoken");
 usersRouter.get(
   "/",
   passport.authenticate("jwt", { session: false }),
-  (req, res) => {
+  async (req, res) => {
     // If this function gets called, authentication was successful.
     // 'req.user' contains the authenticated user.
-    res.json(req.user);
+    const user = await User.findById(req.user.id);
+    console.log(user);
+    res.json(user);
   }
 );
 
