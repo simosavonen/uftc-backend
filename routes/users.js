@@ -15,7 +15,6 @@ usersRouter.get(
     // If this function gets called, authentication was successful.
     // 'req.user' contains the authenticated user.
     const user = await User.findById(req.user.id);
-    console.log(user);
     res.json(user);
   }
 );
