@@ -8,6 +8,8 @@ const challengeSchema = mongoose.Schema({
   endDate: Date,
   deadline: Date,
   seriesTitle: String,
+  description: String,
+  icon: String,
   pointBonus: Number,
   organizers: [
     {

@@ -25,6 +25,8 @@ challengesRouter.post(
       endDate: req.body.endDate,
       deadline: req.body.deadline,
       seriesTitle: req.body.seriesTitle,
+      description: req.body.description,
+      icon: req.body.icon,
       pointBonus: req.body.pointBonus,
       organizers: [req.user.id],
       activities: activityIDs
