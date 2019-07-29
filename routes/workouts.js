@@ -45,25 +45,6 @@ workoutRouter.post(
       activity: req.body.activity
     });
 
-    // dont trust the clients, check what the real points / activity are
-    const activity = await Activity.findById(req.body.activity);
-
-    const scoreExists = await Score.findOne({
-      user: req.user.id,
-      challenge: req.body.challenge
-    });
-    if (scoreExists) {
-      scoreExists.totalPoints += req.body.amount * activity.points;
-      await Score.findByIdAndUpdate(scoreExists.id, scoreExists);
-    } else {
-      const score = new Score({
-        totalPoints: req.body.amount * activity.points,
-        challenge: req.body.challenge,
-        user: req.user.id
-      });
-      await score.save();
-    }
-
     if (workoutExists) {
       // is there an instance for this day already?
       const repeated = workoutExists.instances.find(i => {
@@ -171,12 +152,8 @@ workoutRouter.delete(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const workout = await Workout.findById(req.params.id);
-    const score = await Score.findOne({ user: req.user.id });
     if (workout && workout.user.toString() === req.user.id.toString()) {
-      score.totalPoints -= workout.totalPoints;
       await Workout.findByIdAndRemove(req.params.id);
-      await Score.findByIdAndUpdate(score.id, score);
-
       res.status(204).end();
     } else {
       res.status(404).send({
