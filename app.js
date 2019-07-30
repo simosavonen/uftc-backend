@@ -31,7 +31,7 @@ logger.info("connecting to", config.MONGODB_URI);
 mongoose
   .connect(config.MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
-    logger.error("connected to MongoDB");
+    logger.error("connected to MongoDB"); //error vai info
   })
   .catch(error => {
     logger.error("error connection to MongoDB:", error.message);
