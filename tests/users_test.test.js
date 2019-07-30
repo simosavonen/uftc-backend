@@ -23,12 +23,16 @@ const initialUser = [
 ];
 
 test("user log in", async () => {
-  const response = await api.post("/api/users/register").expect(200);
-
-  const contents = response.body.map(r => r.content);
+  const response = await api
+    .post("/api/users/login")
+    .send(initialUser[0])
+    .expect(200);
 
   //expect("Content-Type", /application\/json/);
-  expect(contents).toContain("name ");
+
+  // login ei palauta taulukkoa, vaan yhden olion
+  expect(response.body.name).toContain("Random Person");
+  expect(response.body.token).toContain("Bearer");
 });
 
 afterAll(() => {
@@ -37,13 +41,14 @@ afterAll(() => {
 
 beforeEach(async () => {
   //await User.remove({});
+
+  // tämä oli mulle uutta, että voi kysyä app.get("env")
   if (app.get("env") === "test") {
     await User.deleteMany({});
   }
-  let userObject = new User(initialUser[0]);
 
-  await userObject.save();
-
-  userObject = new User(initialUser[1]);
-  await userObject.save();
+  // älä itse tallenna olioita kantaan, vaan käytä jo olemassa olevia endpointeja
+  // register bcryptaa salasanan, ja näin loginkin toimii ja testi menee läpi
+  await api.post("/api/users/register").send(initialUser[0]);
+  await api.post("/api/users/register").send(initialUser[1]);
 });
