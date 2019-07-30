@@ -69,7 +69,13 @@ usersRouter.post("/login", async (req, res) => {
 
   res
     .status(200)
-    .send({ token: `Bearer ${token}`, id: user._id, name: user.name });
+    .send({
+      token: `Bearer ${token}`,
+      id: user._id,
+      name: user.name,
+      location: user.location,
+      activeChallenge: user.activeChallenge
+    });
 });
 
 module.exports = usersRouter;
