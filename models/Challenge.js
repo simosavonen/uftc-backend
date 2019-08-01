@@ -19,12 +19,20 @@ const challengeSchema = mongoose.Schema({
   ]
 });
 
+challengeSchema.virtual("participants", {
+  ref: "User",
+  localField: "_id",
+  foreignField: "activeChallenge",
+  count: true
+});
+
 challengeSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
-  }
+  },
+  virtuals: true
 });
 
 const Challenge = mongoose.model("Challenge", challengeSchema);
