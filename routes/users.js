@@ -67,15 +67,30 @@ usersRouter.post("/login", async (req, res) => {
 
   const token = jwt.sign(userForToken, config.SECRET);
 
-  res
-    .status(200)
-    .send({
-      token: `Bearer ${token}`,
-      id: user._id,
-      name: user.name,
-      location: user.location,
-      activeChallenge: user.activeChallenge
-    });
+  res.status(200).send({
+    token: `Bearer ${token}`,
+    id: user._id,
+    name: user.name,
+    location: user.location,
+    activeChallenge: user.activeChallenge
+  });
 });
+
+usersRouter.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    if (req.user.id !== req.params.id) {
+      return res.status(400).send({
+        error: "Can only update your own info"
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true
+    });
+    res.json(updatedUser.toJSON());
+  }
+);
 
 module.exports = usersRouter;
