@@ -1,6 +1,5 @@
 const challengesRouter = require("express").Router();
 const Challenge = require("../models/Challenge");
-const User = require("../models/User");
 const passport = require("passport");
 
 challengesRouter.get("/", async (req, res) => {
