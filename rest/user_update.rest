@@ -1,0 +1,7 @@
+PUT http://localhost:3001/api/users/5d1798065367df2f28dd0708
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmFuZG9tIFBlcnNvbiIsImlkIjoiNWQxNzk4MDY1MzY3ZGYyZjI4ZGQwNzA4IiwiaWF0IjoxNTY0Mzg5NDA5fQ.Bwu48istN9IdZL-SIrpdcBAOvwPe6CPw1cq925xqllo
+
+{
+  "location": "Turku"
+}

@@ -1,11 +1,10 @@
 const challengesRouter = require("express").Router();
 const Challenge = require("../models/Challenge");
-const Activity = require("../models/Activity");
 const passport = require("passport");
 
 challengesRouter.get("/", async (req, res) => {
-  const challenges = await Challenge.find({}).populate("activities");
-  res.json(challenges.map(c => c.toJSON()));
+  const challenges = await Challenge.find({}).populate("participants");
+  res.json(challenges);
 });
 
 // passport protected route(s)
@@ -14,9 +13,6 @@ challengesRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const activities = await Activity.find({});
-    const activityIDs = activities.map(a => a._id);
-
     const challenge = new Challenge({
       name: req.body.name,
       pointsGoal: req.body.pointsGoal,
@@ -28,8 +24,7 @@ challengesRouter.post(
       description: req.body.description,
       icon: req.body.icon,
       pointBonus: req.body.pointBonus,
-      organizers: [req.user.id],
-      activities: activityIDs
+      organizers: [req.user.id]
     });
 
     const createdChallenge = await challenge.save();
