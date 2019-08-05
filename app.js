@@ -13,7 +13,11 @@ const scoresRouter = require("./routes/scores");
 const achievementsRouter = require("./routes/achievements");
 const passwordsRouter = require("./routes/passwords");
 
-const { errorHandler, requestLogger } = require("./utils/middleware");
+const {
+  unknownEndpoint,
+  errorHandler,
+  requestLogger
+} = require("./utils/middleware");
 const logger = require("./utils/logger");
 
 app.use(passport.initialize());
@@ -31,7 +35,7 @@ logger.info("connecting to", config.MONGODB_URI);
 mongoose
   .connect(config.MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
-    logger.error("connected to MongoDB");
+    logger.info("connected to MongoDB"); //error vai info
   })
   .catch(error => {
     logger.error("error connection to MongoDB:", error.message);
@@ -45,6 +49,13 @@ app.use("/api/scores", scoresRouter);
 app.use("/api/achievements", achievementsRouter);
 app.use("/api/passwords", passwordsRouter);
 
+if (app.get("env") === "test") {
+  //process.env.NODE_ENV === 'test ?
+  const testingRouter = require("./routes/testing");
+  app.use("/api/testing", testingRouter);
+}
+
+app.use(unknownEndpoint);
 app.use(errorHandler);
 
 module.exports = app;

@@ -37,6 +37,10 @@ scoresRouter.get("/weekly", async (req, res) => {
 
   const challenges = await Challenge.find({});
 
+  if (challenges.length === 0) {
+    res.status(404).end();
+  }
+
   const startDate = new Date(challenges[0].startDate);
   const endDate = new Date(challenges[0].endDate);
   const weeks = differenceInWeeks(endDate, startDate);

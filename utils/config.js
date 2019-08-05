@@ -6,7 +6,7 @@ const SECRET = process.env.SECRET || "the_default_secret_string";
 
 const EMAIL_ADDRESS = process.env.EMAIL_ADDRESS;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
-
+//MONGODB_URI = process.env.TEST_MONGODB_URI;
 if (process.env.NODE_ENV === "test") {
   MONGODB_URI = process.env.TEST_MONGODB_URI;
 }
