@@ -1,6 +1,4 @@
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
+require("dotenv").config();
 
 let PORT = process.env.PORT || 3001;
 let MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/uftc";
@@ -10,8 +8,11 @@ const EMAIL_ADDRESS = process.env.EMAIL_ADDRESS;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 
 if (process.env.NODE_ENV === "test") {
-  PORT = process.env.TEST_PORT;
   MONGODB_URI = process.env.TEST_MONGODB_URI;
+}
+
+if (process.env.NODE_ENV === "production") {
+  MONGODB_URI = process.env.PROD_MONGODB_URI;
 }
 
 module.exports = {
