@@ -31,7 +31,6 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "cross-env": "^5.2.0",
     "nodemon": "^1.19.1",
     "supertest": "^4.0.2"
   }
