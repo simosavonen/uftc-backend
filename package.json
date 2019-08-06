@@ -15,7 +15,7 @@
     "url": "https://gitlab.utu.fi/fullstack_k19/uftc-backend.git"
   },
   "author": "",
-  "license": "GPL",
+  "license": "GPL-2.0-or-later",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
