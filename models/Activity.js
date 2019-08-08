@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
 const activitySchema = mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true,
+    unique: true
+  },
   points: Number,
   type: String,
   unit: String,

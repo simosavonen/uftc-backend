@@ -24,8 +24,12 @@ activityRouter.post(
       icon: req.body.icon
     });
 
-    const createdActivity = await activity.save();
-    res.status(201).json(createdActivity.toJSON());
+    try {
+      const createdActivity = await activity.save();
+      res.status(201).json(createdActivity.toJSON());
+    } catch (error) {
+      res.status(400).json({ error: "Could not add the activity" });
+    }
   }
 );
 
