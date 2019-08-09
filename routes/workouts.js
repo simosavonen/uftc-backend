@@ -40,54 +40,54 @@ workoutRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    const activity = req.body.activity;
     const workoutExists = await Workout.findOne({
       user: req.user.id,
-      activity: req.body.activity
+      activity
     });
-
     if (workoutExists) {
-      // is there an instance for this day already?
-      const repeated = workoutExists.instances.find(i => {
-        return i.date.toISOString().substr(0, 10) === req.body.date;
-      });
-
-      if (repeated) {
-        const summed = {
-          _id: repeated._id,
-          date: repeated.date,
-          amount: repeated.amount + req.body.amount
-        };
-
-        workoutExists.instances = workoutExists.instances.map(i =>
-          i.date !== summed.date ? i : summed
-        );
-      } else {
-        workoutExists.instances = [
-          ...workoutExists.instances,
-          {
-            date: req.body.date,
-            amount: req.body.amount
-          }
-        ];
-      }
-
-      const updatedWorkout = await Workout.findByIdAndUpdate(
-        workoutExists.id,
-        workoutExists,
-        {
-          new: true
-        }
+      const updatedWorkout = await createWorkoutInstance(
+        req.body,
+        workoutExists
       );
       res.json(updatedWorkout.toJSON());
     } else {
       const workout = new Workout({
         instances: [{ date: req.body.date, amount: req.body.amount }],
         user: req.user.id,
-        activity: req.body.activity
+        activity
       });
 
       const createdWorkout = await workout.save();
+      res.status(201).json(createdWorkout.toJSON());
+    }
+  }
+);
 
+// Identical operation to post "/" above
+workoutRouter.post(
+  "/:activityid",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const activity = req.params.activityid;
+    const workoutExists = await Workout.findOne({
+      user: req.user.id,
+      activity
+    });
+    if (workoutExists) {
+      const updatedWorkout = await createWorkoutInstance(
+        { date: req.body.date, amount: req.body.amount },
+        workoutExists
+      );
+      res.json(updatedWorkout.toJSON());
+    } else {
+      const workout = new Workout({
+        instances: [{ date: req.body.date, amount: req.body.amount }],
+        user: req.user.id,
+        activity
+      });
+
+      const createdWorkout = await workout.save();
       res.status(201).json(createdWorkout.toJSON());
     }
   }
@@ -162,5 +162,52 @@ workoutRouter.delete(
     }
   }
 );
+
+async function createWorkoutInstance(instance, workoutExists) {
+  // is there an instance for this day already?
+  const repeated = workoutExists.instances.find(i => {
+    return i.date.toISOString().substr(0, 10) === instance.date;
+  });
+
+  if (repeated) {
+    const summed = {
+      _id: repeated._id,
+      date: repeated.date,
+      amount: repeated.amount + instance.amount
+    };
+
+    workoutExists.instances = workoutExists.instances.map(i =>
+      i.date !== summed.date ? i : summed
+    );
+  } else {
+    workoutExists.instances = [
+      ...workoutExists.instances,
+      {
+        date: instance.date,
+        amount: instance.amount
+      }
+    ];
+  }
+
+  const updatedWorkout = await Workout.findByIdAndUpdate(
+    workoutExists.id,
+    workoutExists,
+    {
+      new: true
+    }
+  );
+  return updatedWorkout;
+}
+
+async function createWorkout(req, activityid) {
+  const workout = new Workout({
+    instances: [{ date: req.body.date, amount: req.body.amount }],
+    user: req.user.id,
+    activity: activityid
+  });
+
+  const createdWorkout = await workout.save();
+  return createdWorkout;
+}
 
 module.exports = workoutRouter;
