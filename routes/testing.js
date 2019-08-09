@@ -41,43 +41,11 @@ testRouter.get("/reset", async (request, response) => {
   });
   testuser.activeChallenge = testchallenge._id;
 
-  const activityTestFst = new Activity({
-    name: "Pushup - punnerus",
-    points: 4,
-    type: "Lihaskuntoharjoitus",
-    unit: "10 pushups",
-    description: "Punnerra jalat suorana",
-    url: "",
-    icon: "icon.svg"
-  });
-
-  const activityTestSnd = new Activity({
-    name: "Kahvakuulanosto",
-    points: 3,
-    type: "Lihaskuntoharjoitus",
-    unit: "5 nostoa",
-    description: "Nosta kahvakuulaa maan tasolta hartioiden yläpuolelle",
-    url: "http://fake.you.tube/123",
-    icon: "icon.svg"
-  });
-
   const testsavedUser = await testuser.save();
-  //console.log(testsavedUser);
+
   const testChallenge = await testchallenge.save();
-  //console.log(testChallenge);
 
-  //  const createdActivityFst = await activityTestFst.save();
-  //tietokantaa varten tarvitaan viive
-
-  // const createdActivitySnd = await activityTestSnd.save();
-  //setTimeout(await activityTestSnd.save(), 2000);
-  //console.log(createdActivityFst);
-  //console.log(createdActivitySnd);
   response.status(204).end();
 });
-
-//function waitsecond() {
-//  await activityTestSnd.save()
-//}
 
 module.exports = testRouter;
