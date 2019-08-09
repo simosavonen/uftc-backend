@@ -1,6 +1,7 @@
 const activityRouter = require("express").Router();
 const Activity = require("../models/Activity");
 const passport = require("passport");
+const slug = require("slug");
 
 // unprotected routes
 activityRouter.get("/", async (req, res) => {
@@ -23,6 +24,17 @@ activityRouter.post(
       url: req.body.url,
       icon: req.body.icon
     });
+
+    // the slug versions of activity.name need to be unique
+    const activities = await Activity.find({});
+    const name = slug(req.body.name, { lower: true });
+    for (let a of activities) {
+      if (slug(a.name, { lower: true }) === name) {
+        res
+          .status(400)
+          .json({ error: "Activity name would not be unique as an URL" });
+      }
+    }
 
     try {
       const createdActivity = await activity.save();
