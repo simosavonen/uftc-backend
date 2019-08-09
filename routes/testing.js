@@ -2,12 +2,14 @@ const testRouter = require("express").Router();
 const User = require("../models/User");
 const Challenge = require("../models/Challenge");
 const Activity = require("../models/Activity");
+const Workout = require("../models/Workout");
 const bcrypt = require("bcryptjs");
 
 testRouter.get("/reset", async (request, response) => {
   await User.deleteMany({}); //delete Users
   await Challenge.deleteMany({}); //delete challenges
   await Activity.deleteMany({}); //delete activities
+  await Workout.deleteMany({}); //delete workouts
 
   const password = "salasana";
   const saltRounds = 10;
@@ -60,14 +62,22 @@ testRouter.get("/reset", async (request, response) => {
   });
 
   const testsavedUser = await testuser.save();
-  console.log(testsavedUser);
+  //console.log(testsavedUser);
   const testChallenge = await testchallenge.save();
-  console.log(testChallenge);
-  const createdActivityFst = await activityTestFst.save();
-  const createdActivitySnd = await activityTestSnd.save();
-  console.log(createdActivityFst);
-  console.log(createdActivitySnd);
+  //console.log(testChallenge);
+
+  //  const createdActivityFst = await activityTestFst.save();
+  //tietokantaa varten tarvitaan viive
+
+  // const createdActivitySnd = await activityTestSnd.save();
+  //setTimeout(await activityTestSnd.save(), 2000);
+  //console.log(createdActivityFst);
+  //console.log(createdActivitySnd);
   response.status(204).end();
 });
+
+//function waitsecond() {
+//  await activityTestSnd.save()
+//}
 
 module.exports = testRouter;
