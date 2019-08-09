@@ -57,10 +57,13 @@ scoresRouter.get("/weekly", async (req, res) => {
   workouts.forEach(w => {
     if (w.user.id !== lastUser) {
       let title = "null";
+      let bonus = 1;
       if (w.user.activeChallenge) {
-        title = challenges.find(c => {
+        const challenge = challenges.find(c => {
           return c._id.toString() === w.user.activeChallenge.toString();
-        }).seriesTitle;
+        });
+        title = challenge.seriesTitle;
+        bonus = challenge.pointBonus;
       }
 
       weeklyScores.push({
@@ -68,6 +71,7 @@ scoresRouter.get("/weekly", async (req, res) => {
         id: w.user._id,
         location: w.user.location,
         seriesTitle: title,
+        pointBonus: bonus,
         data: new Array(weeks).fill(0)
       });
       lastUser = w.user.id;
@@ -76,7 +80,8 @@ scoresRouter.get("/weekly", async (req, res) => {
     const points = w.activity.points;
     w.instances.forEach(i => {
       const weekIndex = differenceInWeeks(new Date(i.date), startDate);
-      weeklyScores[userIndex].data[weekIndex] += i.amount * points;
+      const pb = weeklyScores[userIndex].pointBonus;
+      weeklyScores[userIndex].data[weekIndex] += i.amount * points * pb;
     });
   });
 
