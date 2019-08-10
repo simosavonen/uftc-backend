@@ -81,8 +81,9 @@ scoresRouter.get("/weekly", async (req, res) => {
     w.instances.forEach(i => {
       const weekIndex = differenceInWeeks(new Date(i.date), startDate);
       const pb = weeklyScores[userIndex].pointBonus;
-      weeklyScores[userIndex].data[weekIndex] +=
-        Math.round(i.amount * points * pb * 10) / 10;
+      const oldValue = weeklyScores[userIndex].data[weekIndex];
+      weeklyScores[userIndex].data[weekIndex] =
+        Math.round(oldValue + i.amount * points * pb * 10) / 10;
     });
   });
 
