@@ -3,11 +3,10 @@ const Score = require("../models/Score");
 const Workout = require("../models/Workout");
 const Challenge = require("../models/Challenge");
 const passport = require("passport");
+const moment = require("moment");
 
 const differenceInWeeks = (dt2, dt1) => {
-  let diff = (dt2.getTime() - dt1.getTime()) / 1000;
-  diff /= 60 * 60 * 24 * 7;
-  return Math.abs(Math.round(diff));
+  return moment(dt2).diff(moment(dt1), "weeks");
 };
 
 const abbreviate = name => {
@@ -72,7 +71,7 @@ scoresRouter.get("/weekly", async (req, res) => {
         location: w.user.location,
         seriesTitle: title,
         pointBonus: bonus,
-        data: new Array(weeks).fill(0)
+        data: new Array(weeks + 1).fill(0)
       });
       lastUser = w.user.id;
       userIndex += 1;
