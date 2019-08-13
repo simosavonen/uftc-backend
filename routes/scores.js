@@ -71,7 +71,7 @@ scoresRouter.get("/weekly", async (req, res) => {
         location: w.user.location,
         seriesTitle: title,
         pointBonus: bonus,
-        data: new Array(weeks + 1).fill(0)
+        data: new Array(weeks).fill(0)
       });
       lastUser = w.user.id;
       userIndex += 1;

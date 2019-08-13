@@ -1,8 +1,9 @@
 const workoutRouter = require("express").Router();
 const Workout = require("../models/Workout");
 const Activity = require("../models/Activity");
-const Score = require("../models/Score");
+const Challenge = require("../models/Challenge");
 const passport = require("passport");
+const moment = require("moment");
 
 // passport protected route(s)
 // http://www.passportjs.org/docs/authenticate/
@@ -40,6 +41,30 @@ workoutRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    const challenges = await Challenge.find({});
+    if (challenges.length === 0) {
+      return res
+        .status(400)
+        .send({ error: "There is no challenge to add workouts to." });
+    }
+
+    const startDate = moment(challenges[0].startDate);
+    const endDate = moment(challenges[0].endDate);
+    if (
+      moment(req.body.date).isBefore(startDate) ||
+      moment(req.body.date).isAfter(endDate)
+    ) {
+      return res.status(400).send({
+        error: "Cannot save a workout outside the challenge timeline"
+      });
+    }
+
+    if (moment(req.body.date).isAfter(moment())) {
+      return res
+        .status(400)
+        .send({ error: "Cannot save a workout in the future" });
+    }
+
     const activity = req.body.activity;
     const workoutExists = await Workout.findOne({
       user: req.user.id,
@@ -69,6 +94,30 @@ workoutRouter.post(
   "/:activityid",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    const challenges = await Challenge.find({});
+    if (challenges.length === 0) {
+      return res
+        .status(400)
+        .send({ error: "There is no challenge to add workouts to." });
+    }
+
+    const startDate = moment(challenges[0].startDate);
+    const endDate = moment(challenges[0].endDate);
+    if (
+      moment(req.body.date).isBefore(startDate) ||
+      moment(req.body.date).isAfter(endDate)
+    ) {
+      return res.status(400).send({
+        error: "Cannot save a workout outside the challenge timeline"
+      });
+    }
+
+    if (moment(req.body.date).isAfter(moment())) {
+      return res
+        .status(400)
+        .send({ error: "Cannot save a workout in the future" });
+    }
+
     const activity = req.params.activityid;
     const workoutExists = await Workout.findOne({
       user: req.user.id,
@@ -93,7 +142,6 @@ workoutRouter.post(
   }
 );
 
-// TODO: allow user to update only their own workout
 workoutRouter.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
@@ -106,6 +154,12 @@ workoutRouter.put(
       });
     }
 
+    if (workout.user.toString() !== req.user.id.toString()) {
+      return res
+        .status(400)
+        .send({ error: "Can only update your own workouts." });
+    }
+
     const oldInstance = workout.instances.find(i => {
       return i._id.toString() === req.body.instance.id;
     });
@@ -115,28 +169,15 @@ workoutRouter.put(
         .send({ error: "Could not find the workout instance" });
     }
 
-    // if user set amount to 0, filter out this instance
-    if (req.body.instance.amount === 0) {
-      workout.instances = workout.instances.filter(
-        i => i._id.toString() !== req.body.instance.id
-      );
-      // delete the workout if instances array got emptied
-      if (workout.instances.length === 0) {
-        await Workout.findByIdAndRemove(workout.id);
-        res.status(204).end();
-      }
-    } else {
-      // user changed the amount
-      workout.instances = workout.instances.map(i =>
-        i._id.toString() !== req.body.instance.id
-          ? i
-          : {
-              date: req.body.instance.date,
-              amount: req.body.instance.amount,
-              _id: i._id
-            }
-      );
-    }
+    workout.instances = workout.instances.map(i =>
+      i._id.toString() !== req.body.instance.id
+        ? i
+        : {
+            date: req.body.instance.date,
+            amount: req.body.instance.amount,
+            _id: i._id
+          }
+    );
 
     const updatedWorkout = await Workout.findByIdAndUpdate(
       workout.id,
@@ -154,7 +195,9 @@ workoutRouter.delete(
     const workout = await Workout.findById(req.params.id);
     if (workout && workout.user.toString() === req.user.id.toString()) {
       await Workout.findByIdAndRemove(req.params.id);
-      res.status(204).end();
+      res.status(200).send({
+        message: "Successfully deleted the whole workout"
+      });
     } else {
       res.status(404).send({
         error: "Could not delete the workout."
@@ -163,10 +206,34 @@ workoutRouter.delete(
   }
 );
 
+workoutRouter.delete(
+  "/:workout/:instance",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const workout = await Workout.findById(req.params.workout);
+    if (workout && workout.user.toString() === req.user.id.toString()) {
+      workout.instances = workout.instances.filter(
+        i => i._id.toString() !== req.params.instance.toString()
+      );
+
+      const updatedWorkout = await Workout.findByIdAndUpdate(
+        workout.id,
+        workout,
+        { new: true }
+      );
+      res.json(updatedWorkout.toJSON());
+    } else {
+      res.status(404).send({
+        error: "Could not delete the instance."
+      });
+    }
+  }
+);
+
 async function createWorkoutInstance(instance, workoutExists) {
   // is there an instance for this day already?
   const repeated = workoutExists.instances.find(i => {
-    return i.date.toISOString().substr(0, 10) === instance.date;
+    return moment(i.date).format("YYYY-MM-DD") === instance.date;
   });
 
   if (repeated) {
