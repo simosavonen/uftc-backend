@@ -22,7 +22,13 @@ usersRouter.get(
 // unprotected routes
 usersRouter.post("/register", async (req, res, next) => {
   try {
-    const { name, email, password, location } = req.body;
+    const { name, email, password, location, secret } = req.body;
+
+    if (secret !== config.SECRET_FOR_REGISTERING) {
+      return res
+        .status(400)
+        .json({ error: "Use the proper link to register." });
+    }
 
     const taken = await User.findOne({ email });
     if (taken) {

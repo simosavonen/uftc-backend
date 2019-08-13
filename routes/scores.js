@@ -3,11 +3,10 @@ const Score = require("../models/Score");
 const Workout = require("../models/Workout");
 const Challenge = require("../models/Challenge");
 const passport = require("passport");
+const moment = require("moment");
 
 const differenceInWeeks = (dt2, dt1) => {
-  let diff = (dt2.getTime() - dt1.getTime()) / 1000;
-  diff /= 60 * 60 * 24 * 7;
-  return Math.abs(Math.round(diff));
+  return moment(dt2).diff(moment(dt1), "weeks");
 };
 
 const abbreviate = name => {
@@ -57,10 +56,13 @@ scoresRouter.get("/weekly", async (req, res) => {
   workouts.forEach(w => {
     if (w.user.id !== lastUser) {
       let title = "null";
+      let bonus = 1;
       if (w.user.activeChallenge) {
-        title = challenges.find(c => {
+        const challenge = challenges.find(c => {
           return c._id.toString() === w.user.activeChallenge.toString();
-        }).seriesTitle;
+        });
+        title = challenge.seriesTitle;
+        bonus = challenge.pointBonus;
       }
 
       weeklyScores.push({
@@ -68,7 +70,8 @@ scoresRouter.get("/weekly", async (req, res) => {
         id: w.user._id,
         location: w.user.location,
         seriesTitle: title,
-        data: new Array(weeks).fill(0)
+        pointBonus: bonus,
+        data: new Array(weeks + 1).fill(0)
       });
       lastUser = w.user.id;
       userIndex += 1;
@@ -76,7 +79,10 @@ scoresRouter.get("/weekly", async (req, res) => {
     const points = w.activity.points;
     w.instances.forEach(i => {
       const weekIndex = differenceInWeeks(new Date(i.date), startDate);
-      weeklyScores[userIndex].data[weekIndex] += i.amount * points;
+      const pb = weeklyScores[userIndex].pointBonus;
+      const oldValue = weeklyScores[userIndex].data[weekIndex];
+      weeklyScores[userIndex].data[weekIndex] =
+        Math.round((oldValue + i.amount * points * pb) * 10) / 10;
     });
   });
 
