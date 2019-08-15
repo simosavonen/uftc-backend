@@ -18,6 +18,49 @@ const abbreviate = name => {
   return nameArray[0] + " " + nameArray[1][0] + ".";
 };
 
+const activityScore = (workouts, activity, bonus) => {
+  const workout = workouts.find(w => {
+    return w.activity.id.toString() === activity.toString();
+  });
+  if (workout) {
+    return (
+      workout.instances.reduce((sum, i) => sum + i.amount, 0) *
+      workout.activity.points *
+      bonus
+    );
+  }
+  return 0;
+};
+
+const dayScore = (workouts, date, bonus) => {
+  const theDay = moment(date);
+  let dayTotal = 0;
+  for (let w of workouts) {
+    for (let i of w.instances) {
+      if (moment(i.date).isSame(theDay, "day")) {
+        dayTotal += i.amount * w.activity.points;
+      }
+    }
+  }
+  return dayTotal * bonus;
+};
+
+const badgeRewardsTotal = (workouts, achievements, bonus) => {
+  const activityAchievements = achievements
+    .filter(ach => ach.activity !== null)
+    .filter(
+      ach => ach.requirement <= activityScore(workouts, ach.activity, bonus)
+    );
+
+  const dailyAchievements = achievements
+    .filter(ach => ach.date !== null)
+    .filter(ach => ach.requirement <= dayScore(workouts, ach.date, bonus));
+
+  return activityAchievements
+    .concat(dailyAchievements)
+    .reduce((sum, i) => sum + i.pointsReward, 0);
+};
+
 // this becomes obsolete soon
 scoresRouter.get("/", async (req, res) => {
   const scores = await Score.find({})
@@ -33,6 +76,7 @@ scoresRouter.get("/weekly", async (req, res) => {
   const hrStart = process.hrtime();
 
   const challenges = await Challenge.find({});
+  const achievements = await Achievement.find({});
 
   if (challenges.length === 0) {
     res.status(404).end();
@@ -63,12 +107,21 @@ scoresRouter.get("/weekly", async (req, res) => {
         bonus = challenge.pointBonus;
       }
 
+      // calculate total points from achievements
+      const usersWorkouts = workouts.filter(uw => uw.user.id === w.user.id);
+      const pointsFromAchievements = badgeRewardsTotal(
+        usersWorkouts,
+        achievements,
+        bonus
+      );
+
       weeklyScores.push({
         name: abbreviate(w.user.name),
         id: w.user._id,
         location: w.user.location,
         seriesTitle: title,
         pointBonus: bonus,
+        pointsFromAchievements: pointsFromAchievements,
         data: new Array(weeks).fill(0)
       });
       lastUser = w.user.id;
