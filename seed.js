@@ -57,7 +57,7 @@ async function fetchChallenges() {
   challenges = await Challenge.find({});
   start = moment(challenges[0].startDate);
   end = moment(challenges[0].endDate);
-  duration = end.diff(start, "days") + 1;
+  duration = end.diff(start, "days");
 
   console.log("fetching challenges, found", challenges.length);
 }

@@ -1,0 +1,3 @@
+DELETE http://localhost:3001/api/workouts/5d52b0cfdc5e8531040a6a64/5d52b0cfdc5e8531040a6a6b
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidXNlcjEiLCJpZCI6IjVkNTJiMGNmZGM1ZTg1MzEwNDBhNmE2MiIsImlhdCI6MTU2NTcwMDMxMX0.GNbcV8M4QuVDrCB_Z_EFNANu7rq7l3oUSaatjuOpLs8
