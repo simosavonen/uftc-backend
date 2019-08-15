@@ -2,6 +2,7 @@ const scoresRouter = require("express").Router();
 const Score = require("../models/Score");
 const Workout = require("../models/Workout");
 const Challenge = require("../models/Challenge");
+const Achievement = require("../models/Achievement");
 const passport = require("passport");
 const moment = require("moment");
 
@@ -25,11 +26,8 @@ scoresRouter.get("/", async (req, res) => {
   res.json(scores.map(s => s.toJSON()));
 });
 
-// Returns the weekly scores, formatted like
-// [{ name: "Random P.",
-//    id: user._id,
-//    seriesTitle: user.activeChallenge.seriesTitle
-//    data: [w1, w2, w3, ...]}]
+// Returns the weekly scores, formatted for easier
+// use in the leaderboard view
 scoresRouter.get("/weekly", async (req, res) => {
   // is this calculation slow with 100+ participants?
   const hrStart = process.hrtime();
@@ -97,6 +95,7 @@ scoresRouter.get("/weekly", async (req, res) => {
   res.json(weeklyScores);
 });
 
+// is this used by any component anymore?
 scoresRouter.get(
   "/today",
   passport.authenticate("jwt", { session: false }),
@@ -105,12 +104,12 @@ scoresRouter.get(
       "activity",
       "points"
     );
-    const today = new Date().toISOString().substr(0, 10);
+    const today = moment().format("YYYY-MM-DD");
     let total = 0;
     workouts.forEach(w => {
       const points = w.activity.points;
       w.instances.forEach(i => {
-        if (i.date.toISOString().substr(0, 10) === today) {
+        if (moment(i.date).format("YYYY-MM-DD") === today) {
           total += i.amount * points; // todo: series bonus
         }
       });
