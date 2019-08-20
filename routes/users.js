@@ -6,6 +6,14 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
+const abbreviate = name => {
+  const nameArray = name.split(" ");
+  if (nameArray.length === 1) return name; // nickname?
+
+  // feature: Tommy Lee Jones  =>  Tommy L.
+  return nameArray[0] + " " + nameArray[1][0] + ".";
+};
+
 // passport protected route(s)
 // http://www.passportjs.org/docs/authenticate/
 usersRouter.get(
@@ -16,6 +24,22 @@ usersRouter.get(
     // 'req.user' contains the authenticated user.
     const user = await User.findById(req.user.id);
     res.json(user);
+  }
+);
+
+usersRouter.get(
+  "/all",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const users = await User.find({});
+    res.json(
+      users.map(u => {
+        return {
+          id: u._id.toString(),
+          name: abbreviate(u.name)
+        };
+      })
+    );
   }
 );
 
