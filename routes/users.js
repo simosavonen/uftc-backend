@@ -17,7 +17,7 @@ const abbreviate = name => {
 // passport protected route(s)
 // http://www.passportjs.org/docs/authenticate/
 usersRouter.get(
-  "/",
+  "/me",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     // If this function gets called, authentication was successful.
@@ -28,7 +28,7 @@ usersRouter.get(
 );
 
 usersRouter.get(
-  "/all",
+  "/",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const users = await User.find({});
