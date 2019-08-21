@@ -24,11 +24,32 @@ challengesRouter.post(
       description: req.body.description,
       icon: req.body.icon,
       pointBonus: req.body.pointBonus,
-      organizers: [req.user.id]
+      organizers:
+        req.body.organizers.length === 0 ? [req.user.id] : req.body.organizers
     });
 
     const createdChallenge = await challenge.save();
     res.status(201).json(createdChallenge.toJSON());
+  }
+);
+
+challengesRouter.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const challenge = await Challenge.findById(req.params.id);
+    if (!challenge) {
+      return res.status(400).send({
+        error: "Could not find the challenge or series to update."
+      });
+    }
+
+    const updatedChallenge = await Challenge.findByIdAndUpdate(
+      challenge.id,
+      { organizers: req.body.organizers },
+      { new: true }
+    );
+    res.json(updatedChallenge.toJSON());
   }
 );
 
