@@ -216,6 +216,13 @@ workoutRouter.delete(
         i => i._id.toString() !== req.params.instance.toString()
       );
 
+      if (workout.instances.length === 0) {
+        await Workout.findByIdAndRemove(req.params.workout);
+        return res.status(204).send({
+          message: "It was the last instance, deleted whole workout object"
+        });
+      }
+
       const updatedWorkout = await Workout.findByIdAndUpdate(
         workout.id,
         workout,
