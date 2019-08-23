@@ -45,11 +45,18 @@ achievementsRouter.post(
       name: req.body.name,
       requirement: req.body.requirement,
       pointsReward: req.body.pointsReward,
-      date: req.body.date,
+      date: req.body.date === "" ? null : req.body.date,
       fontAwesomeIcon: req.body.fontAwesomeIcon,
       iconColor: req.body.iconColor,
-      activity: req.body.activity
+      activity: req.body.activity === "" ? null : req.body.activity
     });
+
+    if (!date && !activity) {
+      return res
+        .status(400)
+        .send({ error: "Invalid data, both date and activity were null." });
+    }
+
     const createdAchievement = await achievement.save();
     res.status(201).json(createdAchievement.toJSON());
   }
