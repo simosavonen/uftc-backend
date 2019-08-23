@@ -51,7 +51,7 @@ achievementsRouter.post(
       activity: req.body.activity === "" ? null : req.body.activity
     });
 
-    if (!date && !activity) {
+    if (!achievement.date && !achievement.activity) {
       return res
         .status(400)
         .send({ error: "Invalid data, both date and activity were null." });
