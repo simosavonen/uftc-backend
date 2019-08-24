@@ -46,7 +46,7 @@ challengesRouter.put(
 
     const updatedChallenge = await Challenge.findByIdAndUpdate(
       challenge.id,
-      { organizers: req.body.organizers },
+      req.body,
       { new: true }
     );
     res.json(updatedChallenge.toJSON());
