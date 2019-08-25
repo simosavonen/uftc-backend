@@ -16,16 +16,6 @@ workoutRouter.get(
   }
 );
 
-// try not to use this, since it returns the whole dataset
-workoutRouter.get(
-  "/all",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    const workouts = await Workout.find({}).populate("activity");
-    res.json(workouts.map(w => w.toJSON()));
-  }
-);
-
 workoutRouter.get(
   "/:userid",
   passport.authenticate("jwt", { session: false }),
@@ -37,59 +27,6 @@ workoutRouter.get(
   }
 );
 
-workoutRouter.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    const challenges = await Challenge.find({});
-    if (challenges.length === 0) {
-      return res
-        .status(400)
-        .send({ error: "There is no challenge to add workouts to." });
-    }
-
-    const startDate = moment(challenges[0].startDate);
-    const endDate = moment(challenges[0].endDate);
-    if (
-      moment(req.body.date).isBefore(startDate) ||
-      moment(req.body.date).isAfter(endDate)
-    ) {
-      return res.status(400).send({
-        error: "Cannot save a workout outside the challenge timeline"
-      });
-    }
-
-    if (moment(req.body.date).isAfter(moment())) {
-      return res
-        .status(400)
-        .send({ error: "Cannot save a workout in the future" });
-    }
-
-    const activity = req.body.activity;
-    const workoutExists = await Workout.findOne({
-      user: req.user.id,
-      activity
-    });
-    if (workoutExists) {
-      const updatedWorkout = await createWorkoutInstance(
-        req.body,
-        workoutExists
-      );
-      res.json(updatedWorkout.toJSON());
-    } else {
-      const workout = new Workout({
-        instances: [{ date: req.body.date, amount: req.body.amount }],
-        user: req.user.id,
-        activity
-      });
-
-      const createdWorkout = await workout.save();
-      res.status(201).json(createdWorkout.toJSON());
-    }
-  }
-);
-
-// Identical operation to post "/" above
 workoutRouter.post(
   "/:activityid",
   passport.authenticate("jwt", { session: false }),
