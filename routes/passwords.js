@@ -56,7 +56,8 @@ passwordsRouter.post("/", async (req, res, next) => {
       });
     } else {
       console.error("tried to reset password of an unknown email");
-      res.status(403).send("unknown email");
+      // let's not reveal to bots the email did not exist
+      res.status(200).json("password reset email sent");
     }
   } catch (exception) {
     next(exception);

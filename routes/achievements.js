@@ -1,6 +1,7 @@
 const achievementsRouter = require("express").Router();
 const Achievement = require("../models/Achievement");
 const passport = require("passport");
+const moment = require("moment");
 
 achievementsRouter.get("/", async (req, res) => {
   const achievements = await Achievement.find({});
@@ -8,14 +9,14 @@ achievementsRouter.get("/", async (req, res) => {
 });
 
 achievementsRouter.get("/daily", async (req, res) => {
-  const today = new Date().toISOString().substr(0, 10);
+  const today = moment().format("YYYY-MM-DD");
   const achievements = await Achievement.find({ date: today });
   res.json(achievements.map(a => a.toJSON()));
 });
 
 achievementsRouter.get("/daily/:date", async (req, res, next) => {
   try {
-    const date = new Date(req.params.date).toISOString().substr(0, 10);
+    const date = moment(req.params.date).format("YYYY-MM-DD");
     const achievements = await Achievement.find({ date });
     res.json(achievements.map(a => a.toJSON()));
   } catch (error) {
