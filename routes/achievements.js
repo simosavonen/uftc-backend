@@ -63,6 +63,26 @@ achievementsRouter.post(
   }
 );
 
+achievementsRouter.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const achievement = await Achievement.findById(req.params.id);
+    if (!achievement) {
+      return res.status(400).send({
+        error: "Could not find the achievement to update."
+      });
+    }
+
+    const updatedAchievement = await Achievement.findByIdAndUpdate(
+      achievement.id,
+      req.body,
+      { new: true }
+    );
+    res.json(updatedAchievement.toJSON());
+  }
+);
+
 achievementsRouter.delete(
   "/:id",
   passport.authenticate("jwt", { session: false }),
