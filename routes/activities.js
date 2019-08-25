@@ -45,4 +45,24 @@ activityRouter.post(
   }
 );
 
+activityRouter.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const activity = await Activity.findById(req.params.id);
+    if (!activity) {
+      return res.status(400).send({
+        error: "Could not find the activity to update."
+      });
+    }
+
+    const updatedActivity = await Activity.findByIdAndUpdate(
+      activity.id,
+      req.body,
+      { new: true }
+    );
+    res.json(updatedActivity.toJSON());
+  }
+);
+
 module.exports = activityRouter;
