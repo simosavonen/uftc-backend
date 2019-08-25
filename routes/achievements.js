@@ -2,6 +2,7 @@ const achievementsRouter = require("express").Router();
 const Achievement = require("../models/Achievement");
 const passport = require("passport");
 const moment = require("moment");
+const helper = require("../utils/helper");
 
 achievementsRouter.get("/", async (req, res) => {
   const achievements = await Achievement.find({});
@@ -37,11 +38,17 @@ achievementsRouter.get("/activity/:id", async (req, res, next) => {
 
 // passport protected route(s)
 // http://www.passportjs.org/docs/authenticate/
-
 achievementsRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    const result = await helper.isOrganizer(req.user.id);
+    if (!result) {
+      return res.status(400).send({
+        error: "Allowed only for organizers."
+      });
+    }
+
     const achievement = new Achievement({
       name: req.body.name,
       requirement: req.body.requirement,
@@ -67,6 +74,13 @@ achievementsRouter.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    const result = await helper.isOrganizer(req.user.id);
+    if (!result) {
+      return res.status(400).send({
+        error: "Allowed only for organizers."
+      });
+    }
+
     const achievement = await Achievement.findById(req.params.id);
     if (!achievement) {
       return res.status(400).send({
@@ -87,6 +101,13 @@ achievementsRouter.delete(
   "/:id",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    const result = await helper.isOrganizer(req.user.id);
+    if (!result) {
+      return res.status(400).send({
+        error: "Allowed only for organizers."
+      });
+    }
+
     await Achievement.findByIdAndRemove(req.params.id);
     res.status(204).end();
   }
