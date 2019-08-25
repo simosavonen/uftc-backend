@@ -174,9 +174,9 @@ workoutRouter.delete(
   }
 );
 
-async function createWorkoutInstance(instance, workoutExists) {
+async function createWorkoutInstance(instance, workout) {
   // is there an instance for this day already?
-  const repeated = workoutExists.instances.find(i => {
+  const repeated = workout.instances.find(i => {
     return moment(i.date).format("YYYY-MM-DD") === instance.date;
   });
 
@@ -187,12 +187,12 @@ async function createWorkoutInstance(instance, workoutExists) {
       amount: repeated.amount + instance.amount
     };
 
-    workoutExists.instances = workoutExists.instances.map(i =>
+    workout.instances = workout.instances.map(i =>
       i.date !== summed.date ? i : summed
     );
   } else {
-    workoutExists.instances = [
-      ...workoutExists.instances,
+    workout.instances = [
+      ...workout.instances,
       {
         date: instance.date,
         amount: instance.amount
@@ -200,25 +200,10 @@ async function createWorkoutInstance(instance, workoutExists) {
     ];
   }
 
-  const updatedWorkout = await Workout.findByIdAndUpdate(
-    workoutExists.id,
-    workoutExists,
-    {
-      new: true
-    }
-  );
-  return updatedWorkout;
-}
-
-async function createWorkout(req, activityid) {
-  const workout = new Workout({
-    instances: [{ date: req.body.date, amount: req.body.amount }],
-    user: req.user.id,
-    activity: activityid
+  const updatedWorkout = await Workout.findByIdAndUpdate(workout.id, workout, {
+    new: true
   });
-
-  const createdWorkout = await workout.save();
-  return createdWorkout;
+  return updatedWorkout;
 }
 
 module.exports = workoutRouter;
