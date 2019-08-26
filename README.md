@@ -199,6 +199,7 @@ Setting up NGINX and securing the MongoDB are beyond the scope of this readme.
 ##### Scores
 
 - GET /api/scores/weekly (returns a formatted result for use in Apex Chart diagram)
+- GET /api/scores/byactivity
 
 ##### Forgotten password reminders
 

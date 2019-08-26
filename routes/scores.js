@@ -141,4 +141,30 @@ scoresRouter.get("/weekly", async (req, res) => {
   res.json(weeklyScores);
 });
 
+scoresRouter.get("/byactivity", async (req, res) => {
+  const workouts = await Workout.find({}).populate("user", [
+    "name",
+    "location"
+  ]);
+
+  const result = {};
+  for (let w of workouts) {
+    // spread syntax only works on iterable objects
+    if (result[w.activity.toString()] === undefined) {
+      result[w.activity.toString()] = [];
+    }
+
+    result[w.activity.toString()] = [
+      ...result[w.activity.toString()],
+      {
+        name: abbreviate(w.user.name),
+        location: w.user.location,
+        total: w.instances.reduce((sum, instance) => sum + instance.amount, 0)
+      }
+    ];
+  }
+
+  res.json(result);
+});
+
 module.exports = scoresRouter;

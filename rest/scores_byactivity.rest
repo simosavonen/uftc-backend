@@ -1,0 +1,2 @@
+GET http://localhost:3001/api/scores/byactivity
+Content-Type: application/json
