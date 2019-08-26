@@ -43,7 +43,7 @@ passwordsRouter.post("/", async (req, res, next) => {
         text:
           "You were sent this because a password reset request was made for this email.\n" +
           "The following link can be used within the next hour to reset your password:\n\n" +
-          `http://localhost:3000/passwordreset/${resetToken}\n\n` +
+          `${config.SITE_URL}/passwordreset/${resetToken}\n\n` +
           "If you did not request a password reset, please ignore this email and your password will remain unchanged.\n\n"
       };
 
@@ -56,7 +56,8 @@ passwordsRouter.post("/", async (req, res, next) => {
       });
     } else {
       console.error("tried to reset password of an unknown email");
-      res.status(403).send("unknown email");
+      // let's not reveal to bots the email did not exist
+      res.status(200).json("password reset email sent");
     }
   } catch (exception) {
     next(exception);

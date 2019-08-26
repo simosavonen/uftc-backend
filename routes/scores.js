@@ -61,14 +61,6 @@ const badgeRewardsTotal = (workouts, achievements, bonus) => {
     .reduce((sum, i) => sum + i.pointsReward, 0);
 };
 
-// this becomes obsolete soon
-scoresRouter.get("/", async (req, res) => {
-  const scores = await Score.find({})
-    .populate("user", "name")
-    .populate("challenge", ["name", "seriesTitle", "pointBonus", "pointsGoal"]);
-  res.json(scores.map(s => s.toJSON()));
-});
-
 // Returns the weekly scores, formatted for easier
 // use in the leaderboard view
 scoresRouter.get("/weekly", async (req, res) => {
@@ -148,28 +140,5 @@ scoresRouter.get("/weekly", async (req, res) => {
 
   res.json(weeklyScores);
 });
-
-// is this used by any component anymore?
-scoresRouter.get(
-  "/today",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    const workouts = await Workout.find({ user: req.user.id }).populate(
-      "activity",
-      "points"
-    );
-    const today = moment().format("YYYY-MM-DD");
-    let total = 0;
-    workouts.forEach(w => {
-      const points = w.activity.points;
-      w.instances.forEach(i => {
-        if (moment(i.date).format("YYYY-MM-DD") === today) {
-          total += i.amount * points; // todo: series bonus
-        }
-      });
-    });
-    res.json({ totalToday: total });
-  }
-);
 
 module.exports = scoresRouter;
