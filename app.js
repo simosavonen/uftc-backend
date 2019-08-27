@@ -25,7 +25,7 @@ require("./passport-config")(passport);
 
 app.use(cors()); // todo: configure this
 app.use(express.json({ extended: false }));
-app.use(requestLogger);
+//app.use(requestLogger);
 
 // fix deprecation warnings
 mongoose.set("useFindAndModify", false);
