@@ -16,7 +16,7 @@
 ---
 
 <p>
- A single-page applipation for a team to track their progress in the Ultimate Functional Training Challenge, a fun exercise competition designed to promote an active lifestyle and get software engineers up from their desks during the work day.
+ A single-page application for a team to track their progress in the Ultimate Functional Training Challenge, a fun exercise competition designed to promote an active lifestyle and get software engineers up from their desks during the work day.
  </p>
 
 <p>
