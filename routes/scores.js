@@ -1,9 +1,7 @@
 const scoresRouter = require("express").Router();
-const Score = require("../models/Score");
 const Workout = require("../models/Workout");
 const Challenge = require("../models/Challenge");
 const Achievement = require("../models/Achievement");
-const passport = require("passport");
 const moment = require("moment");
 
 const differenceInWeeks = (dt2, dt1) => {
@@ -142,24 +140,34 @@ scoresRouter.get("/weekly", async (req, res) => {
 });
 
 scoresRouter.get("/byactivity", async (req, res) => {
-  const workouts = await Workout.find({}).populate("user", [
-    "name",
-    "location"
-  ]);
+  const workouts = await Workout.find({})
+    .populate("activity", "points")
+    .populate("user", ["name", "location", "activeChallenge"]);
+
+  const challenges = await Challenge.find({});
 
   const result = {};
-  for (let w of workouts) {
+  for (let w of workouts.filter(w => w.user.activeChallenge !== null)) {
     // spread syntax only works on iterable objects
-    if (result[w.activity.toString()] === undefined) {
-      result[w.activity.toString()] = [];
+    if (result[w.activity._id.toString()] === undefined) {
+      result[w.activity._id.toString()] = [];
     }
 
-    result[w.activity.toString()] = [
-      ...result[w.activity.toString()],
+    const challenge = challenges.find(c => {
+      return c._id.toString() === w.user.activeChallenge.toString();
+    });
+
+    result[w.activity._id.toString()] = [
+      ...result[w.activity._id.toString()],
       {
         name: abbreviate(w.user.name),
         location: w.user.location,
-        total: w.instances.reduce((sum, instance) => sum + instance.amount, 0)
+        series: challenge.seriesTitle,
+        total: Math.floor(
+          w.instances.reduce((sum, instance) => sum + instance.amount, 0) *
+            w.activity.points *
+            +challenge.pointBonus
+        )
       }
     ];
   }
