@@ -7,7 +7,7 @@ const passport = require("passport");
 const moment = require("moment");
 
 const differenceInWeeks = (dt2, dt1) => {
-  return moment(dt2).diff(moment(dt1), "weeks");
+  return Math.ceil(moment(dt2).diff(moment(dt1), "weeks", true));
 };
 
 const abbreviate = name => {
