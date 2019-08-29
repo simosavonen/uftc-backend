@@ -4,10 +4,6 @@ const Challenge = require("../models/Challenge");
 const Achievement = require("../models/Achievement");
 const moment = require("moment");
 
-const differenceInWeeks = (dt2, dt1) => {
-  return Math.ceil(moment(dt2).diff(moment(dt1), "weeks", true));
-};
-
 const abbreviate = name => {
   const nameArray = name.split(" ");
   if (nameArray.length === 1) return name; // nickname?
@@ -74,7 +70,9 @@ scoresRouter.get("/weekly", async (req, res) => {
 
   const startDate = new Date(challenges[0].startDate);
   const endDate = new Date(challenges[0].endDate);
-  const weeks = differenceInWeeks(endDate, startDate);
+  const weeks = Math.ceil(
+    moment(endDate).diff(moment(startDate), "weeks", true)
+  );
 
   const workouts = await Workout.find({})
     .sort({ user: "asc" })
@@ -119,7 +117,10 @@ scoresRouter.get("/weekly", async (req, res) => {
     }
     const points = w.activity.points;
     w.instances.forEach(i => {
-      const weekIndex = differenceInWeeks(new Date(i.date), startDate);
+      const weekIndex = moment(new Date(i.date)).diff(
+        moment(startDate),
+        "weeks"
+      );
       const pb = weeklyScores[userIndex].pointBonus;
       const oldValue = weeklyScores[userIndex].data[weekIndex];
       weeklyScores[userIndex].data[weekIndex] = Math.round(
